@@ -38,7 +38,7 @@ int main(int argc, char**argv) {\
 #define TEST_ASSERT_EQUALS_ARRAY(X, Y, SIZE) TEST_ONE_ASSERT do { \
     for (size_t i = 0; i < SIZE; ++i) {\
         if (X[i] != Y[i]) {\
-            std::stringstream s; s << "Array does not match at index " << i << " " << X[i] << " != " << Y[i];\
+            std::stringstream s; s << "Array does not match at index " << i << " " << std::hex << X[i] << " != " << Y[i] << std::dec;\
             throw s.str();\
         }\
     }\

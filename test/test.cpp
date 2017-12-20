@@ -109,14 +109,54 @@ TEST_MAIN(
   TEST_SUITE(message import,
     TEST_CASE(import from empty string,
       uint32_t res[16] = {0};
-      TEST_ASSERT_EQUALS_ARRAY(sha::Message::import(""), res, 16)
+      sha::Message::Chunk chunk;
+      TEST_ASSERT_EQUALS_ARRAY(chunk.wordPtr(), res, 16)
     )
-    TEST_CASE(import from string,
+    TEST_CASE(import hello world,
       uint32_t res[16] = {0};
       res[0] = 0x48656c6c;
       res[1] = 0x6f20776f;
       res[2] = 0x726c6400;
-      TEST_ASSERT_EQUALS_ARRAY(sha::Message::import("Hello world"), res, 16)
+      sha::Message::Chunk chunk("Hello world");
+      TEST_ASSERT_EQUALS_ARRAY(chunk.wordPtr(), res, 16)
+    )
+    uint32_t alphabet[18] = {0};
+    alphabet[0] = 0x61616161;
+    alphabet[1] = 0x62626262;
+    alphabet[2] = 0x63636363;
+    alphabet[3] = 0x64646464;
+    alphabet[4] = 0x65656565;
+    alphabet[5] = 0x66666666;
+    alphabet[6] = 0x67676767;
+    alphabet[7] = 0x68686868;
+    alphabet[8] = 0x69696969;
+    alphabet[9] = 0x6a6a6a6a;
+    alphabet[10] = 0x6b6b6b6b;
+    alphabet[11] = 0x6c6c6c6c;
+    alphabet[12] = 0x6d6d6d6d;
+    alphabet[13] = 0x6e6e6e6e;
+    alphabet[14] = 0x6f6f6f6f;
+    alphabet[15] = 0x70707070;
+    alphabet[16] = 0x80;
+    TEST_CASE(import alphabet to full block,
+      sha::Message::Chunk chunk("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnooooppppqqqqrrrrssss");
+      TEST_ASSERT_EQUALS_ARRAY(chunk.wordPtr(), alphabet, 17)
+    )
+    std::vector<sha::Message::Chunk> chunks = sha::Message::createChunks("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnooooppppqqqqrrrrssss");
+    TEST_CASE(import multiple blocks,
+      TEST_ASSERT_EQUALS(chunks.size(), 2);
+    )
+
+    TEST_CASE(compare data of first chunk,
+      TEST_ASSERT_EQUALS_ARRAY(chunks[0].wordPtr(), alphabet, 2)
+    )
+
+    TEST_CASE(compare data of second chunk,
+      uint32_t res[16] = {0};
+      res[0] = 0x71717171;
+      res[1] = 0x72727272;
+      res[2] = 0x73737373;
+      TEST_ASSERT_EQUALS_ARRAY(chunks[1].wordPtr(), res, 8)
     )
   )
 )

@@ -130,7 +130,7 @@ TEST_MAIN(
     )
   )
 
-  uint32_t alphabet[18] = {0};
+  uint32_t alphabet[16] = {0};
   alphabet[0] = 0x61616161;
   alphabet[1] = 0x62626262;
   alphabet[2] = 0x63636363;
@@ -147,32 +147,35 @@ TEST_MAIN(
   alphabet[13] = 0x6e6e6e6e;
   alphabet[14] = 0x6f6f6f6f;
   alphabet[15] = 0x70707070;
-  alphabet[16] = 0x80;
   TEST_SUITE(Chunk creation,
-    TEST_CASE(import from empty string,
+    TEST_CASE(import from empty string check size,
+      std::vector<sha::Message::Chunk> chunks = sha::Message::Chunk::create("");
+      TEST_ASSERT_EQUALS(chunks.size(), 1)
+    )
+    TEST_CASE(import from empty string check zero,
       uint32_t res[16] = {0};
-      sha::Message::Chunk chunk;
-      TEST_ASSERT_EQUALS_ARRAY(chunk.wordPtr(), res, 16)
+      res[0] = 0x80000000;
+      std::vector<sha::Message::Chunk> chunks = sha::Message::Chunk::create("");
+      TEST_ASSERT_EQUALS_ARRAY(chunks[0].wordPtr(), res, 16)
     )
     TEST_CASE(import hello world,
       uint32_t res[16] = {0};
       res[0] = 0x48656c6c;
       res[1] = 0x6f20776f;
-      res[2] = 0x726c6400;
-      sha::Message::Chunk chunk("Hello world");
-      TEST_ASSERT_EQUALS_ARRAY(chunk.wordPtr(), res, 16)
+      res[2] = 0x726c6480;
+      res[15] = 0x00000058;
+      std::vector<sha::Message::Chunk> chunks = sha::Message::Chunk::create("Hello world");
+      TEST_ASSERT_EQUALS_ARRAY(chunks[0].wordPtr(), res, 16)
     )
-    TEST_CASE(import alphabet to full block,
-      sha::Message::Chunk chunk("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnooooppppqqqqrrrrssss");
-      TEST_ASSERT_EQUALS_ARRAY(chunk.wordPtr(), alphabet, 17)
-    )
-    std::vector<sha::Message::Chunk> chunks = sha::Message::createChunks("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnooooppppqqqqrrrrssss");
+    std::vector<sha::Message::Chunk> chunks = sha::Message::Chunk::create("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnooooppppqqqqrrrrssss");
     TEST_CASE(import multiple blocks,
       TEST_ASSERT_EQUALS(chunks.size(), 2);
     )
-
+    TEST_CASE(import alphabet to full block,
+      TEST_ASSERT_EQUALS_ARRAY(chunks[0].wordPtr(), alphabet, 16)
+    )
     TEST_CASE(compare data of first chunk,
-      TEST_ASSERT_EQUALS_ARRAY(chunks[0].wordPtr(), alphabet, 17)
+      TEST_ASSERT_EQUALS_ARRAY(chunks[0].wordPtr(), alphabet, 16)
     )
 
     TEST_CASE(compare data of second chunk,
@@ -180,12 +183,14 @@ TEST_MAIN(
       res[0] = 0x71717171;
       res[1] = 0x72727272;
       res[2] = 0x73737373;
+      res[3] = 0x80000000;
       TEST_ASSERT_EQUALS_ARRAY(chunks[1].wordPtr(), res, 8)
     )
   )
+
   TEST_SUITE(Message schedule from chunk,
-    sha::Message::Chunk chunk("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnoooopppp");
-    sha::Message::Schedule schedule(chunk);
+    std::vector<sha::Message::Chunk> chunks = sha::Message::Chunk::create("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnoooopppp");
+    sha::Message::Schedule schedule(chunks[0]);
     TEST_CASE(Chunk is copied,
       TEST_ASSERT_EQUALS_ARRAY(schedule.wordPtr(), alphabet, 16);
     )
@@ -213,37 +218,73 @@ TEST_MAIN(
     )
 
     TEST_CASE(Empty rounds hash,
-      sha::Message::Chunk chunk;
+      std::vector<sha::Message::Chunk> chunks = sha::Message::Chunk::create("");
       sha::Hash hash;
-      hash.round(chunk);
+      hash.round(chunks[0]);
       uint32_t res[8] = {0};
-      res[0] = 0x6a09e667;
-      res[1] = 0xbb67ae85;
-      res[2] = 0x3c6ef372;
-      res[3] = 0xa54ff53a;
-      res[4] = 0x510e527f;
-      res[5] = 0x9b05688c;
-      res[6] = 0x1f83d9ab;
-      res[7] = 0x5be0cd19;
+      res[0] = 0xe3b0c442;
+      res[1] = 0x98fc1c14;
+      res[2] = 0x9afbf4c8;
+      res[3] = 0x996fb924;
+      res[4] = 0x27ae41e4;
+      res[5] = 0x649b934c;
+      res[6] = 0xa495991b;
+      res[7] = 0x7852b855;
       TEST_ASSERT_EQUALS_ARRAY(hash.get(), res, 8);
     )
 
     TEST_CASE(Hash round with one chunk,
-      sha::Message::Chunk chunk("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnoooopppp");
+      std::vector<sha::Message::Chunk> chunks = sha::Message::Chunk::create("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjj");
       sha::Hash hash;
-      hash.round(chunk);
+      hash.round(chunks[0]);
 
       uint32_t res[8] = {0};
-      res[0] = 0x6a09e667;
-      res[1] = 0xbb67ae85;
-      res[2] = 0x3c6ef372;
-      res[3] = 0xa54ff53a;
-      res[4] = 0x510e527f;
-      res[5] = 0x9b05688c;
-      res[6] = 0x1f83d9ab;
-      res[7] = 0x5be0cd19;
-      //37e4e3c02a59b5f82b095a3c75acf04a0bad972ef5488999a71e99df56c28772
+      res[0] = 0x66dd9cb2;
+      res[1] = 0x553a3835;
+      res[2] = 0x78cf2352;
+      res[3] = 0x131981dd;
+      res[4] = 0x3f0d296c;
+      res[5] = 0x1e1bf58e;
+      res[6] = 0xefd7293a;
+      res[7] = 0xd2d71fec;
       TEST_ASSERT_EQUALS_ARRAY(hash.get(), res, 8);
     )
+
+    TEST_CASE(Hash round with two chunks,
+      std::vector<sha::Message::Chunk> chunks = sha::Message::Chunk::create("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnoooopppp");
+      sha::Hash hash;
+      hash.round(chunks[0]);
+      hash.round(chunks[1]);
+
+      uint32_t res[8] = {0};
+      res[0] = 0x37e4e3c0;
+      res[1] = 0x2a59b5f8;
+      res[2] = 0x2b095a3c;
+      res[3] = 0x75acf04a;
+      res[4] = 0x0bad972e;
+      res[5] = 0xf5488999;
+      res[6] = 0xa71e99df;
+      res[7] = 0x56c28772;
+      TEST_ASSERT_EQUALS_ARRAY(hash.get(), res, 8);
+    )
+
+/*
+    TEST_CASE(Hash round with all chunks,
+      std::vector<sha::Message::Chunk> chunks = sha::Message::Chunk::create("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnoooopppp");
+      sha::Hash hash;
+      hash.round(chunks);
+
+      uint32_t res[8] = {0};
+      res[0] = 0x37e4e3c0;
+      res[1] = 0x2a59b5f8;
+      res[2] = 0x2b095a3c;
+      res[3] = 0x75acf04a;
+      res[4] = 0x0bad972e;
+      res[5] = 0xf5488999;
+      res[6] = 0xa71e99df;
+      res[7] = 0x56c28772;
+      TEST_ASSERT_EQUALS_ARRAY(hash.get(), res, 8);
+    )
+*/
   )
 )

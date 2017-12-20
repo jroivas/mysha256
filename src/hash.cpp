@@ -25,8 +25,9 @@ void Hash::round(const sha::Message::Schedule &schedule)
     uint32_t g = hash[6];
     uint32_t h = hash[7];
 
+    const uint32_t *data = schedule.wordPtr();
     for (size_t i = 0; i < 64; ++i) {
-        uint32_t T1 = h + sha::Box::S1(e) + sha::Box::Ch(e, f, g) + sha::K[i] + schedule.wordPtr()[i];
+        uint32_t T1 = h + sha::Box::S1(e) + sha::Box::Ch(e, f, g) + sha::K[i] + data[i];
         uint32_t T2 = sha::Box::S0(a) + sha::Box::Ma(a, b, c);
         h = g;
         g = f;

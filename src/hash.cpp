@@ -2,6 +2,8 @@
 #include "constants.hh"
 #include "boxes.hh"
 #include <string.h>
+#include <sstream>
+#include <iomanip>
 
 using sha::Hash;
 
@@ -60,6 +62,7 @@ void Hash::appendRound(const uint32_t *r)
 
 void Hash::round(const sha::Message::Schedule &schedule)
 {
+    storedDigest = "";
     uint32_t r[8];
     memcpy(r, hash, 8 * 4);
     loopRounds(r, schedule.wordPtr());
@@ -69,4 +72,16 @@ void Hash::round(const sha::Message::Schedule &schedule)
 void Hash::round(const std::vector<sha::Message::Chunk> &chunks)
 {
     for (auto chunk : chunks) round(chunk);
+}
+
+std::string Hash::digest()
+{
+    if (storedDigest.empty()) {
+        std::stringstream s;
+        s << std::hex;
+        for (size_t i = 0; i < 8; ++i) s << std::setfill('0') << std::setw(8) << hash[i];
+        s << std::dec;
+        storedDigest = s.str();
+    }
+    return storedDigest;
 }

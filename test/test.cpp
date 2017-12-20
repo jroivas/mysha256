@@ -284,5 +284,12 @@ TEST_MAIN(
       res[7] = 0x56c28772;
       TEST_ASSERT_EQUALS_ARRAY(hash.get(), res, 8);
     )
+    TEST_CASE(Get digest,
+      std::vector<sha::Message::Chunk> chunks = sha::Message::Chunk::create("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnoooopppp");
+      sha::Hash hash;
+      hash.round(chunks);
+
+      TEST_ASSERT_EQUALS(hash.digest(), "37e4e3c02a59b5f82b095a3c75acf04a0bad972ef5488999a71e99df56c28772");
+    )
   )
 )

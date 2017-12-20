@@ -31,23 +31,42 @@ uint32_t Hash::calculateT2(const uint32_t *r) const
     return sha::Box::S0(r[0]) + sha::Box::Ma(r[0], r[1], r[2]);
 }
 
-void Hash::round(const sha::Message::Schedule &schedule)
+void Hash::rotateOld(uint32_t *r)
 {
-    uint32_t r[8];
-    memcpy(r, hash, 8 * 4);
-    const uint32_t *data = schedule.wordPtr();
+    for (size_t i = 7; i>0; --i) r[i] = r[i - 1];
+}
+
+void Hash::applyTemp(uint32_t *r, uint32_t a, uint32_t b)
+{
+    r[0] = a;
+    r[4] = b;
+}
+
+void Hash::loopRounds(uint32_t *r, const uint32_t *data)
+{
     for (size_t i = 0; i < 64; ++i) {
         uint32_t T1 = calculateT1(i, r, data);
         uint32_t T2 = calculateT2(r);
         uint32_t T3 = r[3] + T1;
-        for (size_t i = 7; i>0; --i) r[i] = r[i - 1];
-        r[4] = T3;
-        r[0] = T1 + T2;
+        rotateOld(r);
+        applyTemp(r, T1 + T2, T3);
     }
+}
+
+void Hash::appendRound(const uint32_t *r)
+{
     for (size_t i = 0; i < 8; ++i) hash[i] += r[i];
+}
+
+void Hash::round(const sha::Message::Schedule &schedule)
+{
+    uint32_t r[8];
+    memcpy(r, hash, 8 * 4);
+    loopRounds(r, schedule.wordPtr());
+    appendRound(r);
 }
 
 void Hash::round(const std::vector<sha::Message::Chunk> &chunks)
 {
-    for (auto chunk : chunks)  round(chunk);
+    for (auto chunk : chunks) round(chunk);
 }

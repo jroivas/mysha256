@@ -291,5 +291,15 @@ TEST_MAIN(
 
       TEST_ASSERT_EQUALS(hash.digest(), "37e4e3c02a59b5f82b095a3c75acf04a0bad972ef5488999a71e99df56c28772");
     )
+
+    TEST_CASE(Digest update ,
+      std::vector<sha::Message::Chunk> chunks = sha::Message::Chunk::create("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnoooopppp");
+      sha::Hash hash;
+      hash.round(chunks);
+      std::string digest = hash.digest();
+      hash.round(chunks);
+
+      TEST_ASSERT_TRUE(hash.digest() != digest);
+    )
   )
 )

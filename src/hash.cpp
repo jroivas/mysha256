@@ -14,36 +14,40 @@ const uint32_t *Hash::get() const
     return hash;
 }
 
+/*
+uint32_t Hash::calculateT1(uint32_t h, uint32_t e, uint32_t f, uint32_t g)
+{
+    return h + sha::Box::S1(e) + sha::Box::Ch(e, f, g) + sha::K[i] + data[i];
+}
+*/
+
+uint32_t Hash::calculateT1(size_t i, const uint32_t *r, const uint32_t *data) const
+{
+    return r[7] + sha::Box::S1(r[4]) + sha::Box::Ch(r[4], r[5], r[6]) + sha::K[i] + data[i];
+}
+
+uint32_t Hash::calculateT2(const uint32_t *r) const
+{
+    return sha::Box::S0(r[0]) + sha::Box::Ma(r[0], r[1], r[2]);
+}
+
 void Hash::round(const sha::Message::Schedule &schedule)
 {
-    uint32_t a = hash[0];
-    uint32_t b = hash[1];
-    uint32_t c = hash[2];
-    uint32_t d = hash[3];
-    uint32_t e = hash[4];
-    uint32_t f = hash[5];
-    uint32_t g = hash[6];
-    uint32_t h = hash[7];
-
+    uint32_t r[8];
+    memcpy(r, hash, 8 * 4);
     const uint32_t *data = schedule.wordPtr();
     for (size_t i = 0; i < 64; ++i) {
-        uint32_t T1 = h + sha::Box::S1(e) + sha::Box::Ch(e, f, g) + sha::K[i] + data[i];
-        uint32_t T2 = sha::Box::S0(a) + sha::Box::Ma(a, b, c);
-        h = g;
-        g = f;
-        f = e;
-        e = d + T1;
-        d = c;
-        c = b;
-        b = a;
-        a = T1 + T2;
+        uint32_t T1 = calculateT1(i, r, data);
+        uint32_t T2 = calculateT2(r);
+        uint32_t T3 = r[3] + T1;
+        for (size_t i = 7; i>0; --i) r[i] = r[i - 1];
+        r[4] = T3;
+        r[0] = T1 + T2;
     }
-    hash[0] += a;
-    hash[1] += b;
-    hash[2] += c;
-    hash[3] += d;
-    hash[4] += e;
-    hash[5] += f;
-    hash[6] += g;
-    hash[7] += h;
+    for (size_t i = 0; i < 8; ++i) hash[i] += r[i];
+}
+
+void Hash::round(const std::vector<sha::Message::Chunk> &chunks)
+{
+    for (auto chunk : chunks)  round(chunk);
 }

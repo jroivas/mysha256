@@ -268,7 +268,6 @@ TEST_MAIN(
       TEST_ASSERT_EQUALS_ARRAY(hash.get(), res, 8);
     )
 
-/*
     TEST_CASE(Hash round with all chunks,
       std::vector<sha::Message::Chunk> chunks = sha::Message::Chunk::create("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnoooopppp");
       sha::Hash hash;
@@ -285,6 +284,5 @@ TEST_MAIN(
       res[7] = 0x56c28772;
       TEST_ASSERT_EQUALS_ARRAY(hash.get(), res, 8);
     )
-*/
   )
 )

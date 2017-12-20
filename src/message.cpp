@@ -2,6 +2,7 @@
 #include <string.h>
 
 using sha::Message::Chunk;
+using sha::Message::Schedule;
 
 Chunk::Chunk()
 {
@@ -18,6 +19,12 @@ Chunk::Chunk(std::string message)
     }
 }
 
+Chunk::Chunk(const Chunk &other)
+{
+    init();
+    memcpy(data, other.data, 65);
+}
+
 size_t Chunk::indexToBigEndianIndex(size_t i)
 {
     size_t idx = i / 4;
@@ -31,7 +38,7 @@ void Chunk::init()
     data[64] = 0x80;
 }
 
-uint32_t *Chunk::wordPtr()
+const uint32_t *Chunk::wordPtr() const
 {
     return reinterpret_cast<uint32_t*>(data);
 }
@@ -46,4 +53,22 @@ std::vector<Chunk> sha::Message::createChunks(const std::string message)
         data = data.length() > 64 ? data.substr(64) : "";
     }
     return res;
+}
+
+Schedule::Schedule(const Chunk &chunk)
+{
+    data = new uint32_t[64];
+    copyChunk(chunk);
+    //for (size_t i = 0; i < 16; ++i)
+}
+
+void Schedule::copyChunk(const Chunk &chunk)
+{
+    const uint32_t *src = chunk.wordPtr();
+    for (size_t i = 0; i < 16; ++i) data[i] = src[i];
+}
+
+const uint32_t *Schedule::wordPtr() const
+{
+    return data;
 }

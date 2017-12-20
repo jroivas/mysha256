@@ -117,6 +117,17 @@ TEST_MAIN(
       TEST_ASSERT_EQUALS(sha::Box::I0(0xABE1337F), 0xA6F40EF1)
     )
   )
+  TEST_SUITE(I1 box,
+    TEST_CASE(I1 box zero input,
+      TEST_ASSERT_EQUALS(sha::Box::I1(0), 0)
+    )
+    TEST_CASE(I1 box full input,
+      TEST_ASSERT_EQUALS(sha::Box::I1(0xFFFFFFFF), 0x3FFFFF)
+    )
+    TEST_CASE(I1 random input,
+      TEST_ASSERT_EQUALS(sha::Box::I1(0xABE1337F), 0xBFFAD8C0)
+    )
+  )
 
   uint32_t alphabet[18] = {0};
   alphabet[0] = 0x61616161;

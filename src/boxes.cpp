@@ -29,3 +29,7 @@ uint32_t sha::Box::I0(uint32_t x)
     return ror(x, 7) ^ ror(x, 18) ^ (x >> 3);
 }
 
+uint32_t sha::Box::I1(uint32_t x)
+{
+    return ror(x, 17) ^ ror(x, 19) ^ (x >> 10);
+}

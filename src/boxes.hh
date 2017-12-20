@@ -10,6 +10,7 @@ uint32_t Ma(uint32_t, uint32_t, uint32_t);
 uint32_t S0(uint32_t);
 uint32_t S1(uint32_t);
 uint32_t I0(uint32_t);
+uint32_t I1(uint32_t);
 
 }
 }

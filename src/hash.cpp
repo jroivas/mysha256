@@ -16,13 +16,6 @@ const uint32_t *Hash::get() const
     return hash;
 }
 
-/*
-uint32_t Hash::calculateT1(uint32_t h, uint32_t e, uint32_t f, uint32_t g)
-{
-    return h + sha::Box::S1(e) + sha::Box::Ch(e, f, g) + sha::K[i] + data[i];
-}
-*/
-
 uint32_t Hash::calculateT1(size_t i, const uint32_t *r, const uint32_t *data) const
 {
     return r[7] + sha::Box::S1(r[4]) + sha::Box::Ch(r[4], r[5], r[6]) + sha::K[i] + data[i];

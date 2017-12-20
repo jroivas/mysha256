@@ -19,7 +19,6 @@ Chunk::Chunk(std::string message)
     if (l > 64) l  = 64;
     for (size_t i = 0; i < l; ++i) {
         data[indexToBigEndianIndex(i)] = message[i];
-        //data[i] = message[i];
     }
 }
 
@@ -39,7 +38,6 @@ size_t Chunk::indexToBigEndianIndex(size_t i)
 void Chunk::init()
 {
     data = new uint8_t[64]();
-    //data[64] = 0x80;
 }
 
 const uint32_t *Chunk::wordPtr() const
@@ -103,13 +101,6 @@ std::vector<Chunk> sha::Message::Chunk::create(const std::string message)
         if (i == chunks - 1) a.insertLength(len);
         res.push_back(a);
     }
-    /*
-    while (data.length() > 0) {
-        Chunk a(data);
-        res.push_back(a);
-        data = data.length() > 64 ? data.substr(64) : "";
-    }
-    */
     return res;
 }
 

@@ -18,3 +18,8 @@ uint32_t sha::Box::S0(uint32_t x)
 {
     return ror(x, 2) ^ ror(x, 13) ^ ror(x, 22);
 }
+
+uint32_t sha::Box::S1(uint32_t x)
+{
+    return ror(x, 6) ^ ror(x, 11) ^ ror(x, 25);
+}

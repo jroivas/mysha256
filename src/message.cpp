@@ -1,5 +1,7 @@
 #include "message.hh"
+
 #include <string.h>
+#include "boxes.hh"
 
 using sha::Message::Chunk;
 using sha::Message::Schedule;
@@ -59,13 +61,22 @@ Schedule::Schedule(const Chunk &chunk)
 {
     data = new uint32_t[64];
     copyChunk(chunk);
-    //for (size_t i = 0; i < 16; ++i)
+    extendRest();
 }
 
 void Schedule::copyChunk(const Chunk &chunk)
 {
     const uint32_t *src = chunk.wordPtr();
     for (size_t i = 0; i < 16; ++i) data[i] = src[i];
+}
+
+void Schedule::extendRest()
+{
+    for (size_t i = 16; i < 64; ++i) {
+        uint32_t s0 = sha::Box::I0(data[i - 15]);
+        uint32_t s1 = sha::Box::I1(data[i - 2]);
+        data[i] = data[i - 16] + s0 + data[i - 7] + s1;
+    }
 }
 
 const uint32_t *Schedule::wordPtr() const

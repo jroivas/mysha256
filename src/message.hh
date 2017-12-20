@@ -32,11 +32,11 @@ public:
 
 private:
     void copyChunk(const Chunk &);
+    void extendRest();
     uint32_t *data;
 };
 
 std::vector<Chunk> createChunks(const std::string);
-
 
 }
 }

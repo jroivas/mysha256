@@ -190,7 +190,8 @@ TEST_MAIN(
     )
     TEST_CASE(Rest of schedule is generated,
       uint32_t res[16] = {0};
-      //res[0] = 0x15;
+      res[0] = 0x761d5d5c;
+      res[1] = 0x166a6a69;
       TEST_ASSERT_EQUALS_ARRAY_INDEX(schedule.wordPtr(), res, 16, 2);
     )
   )

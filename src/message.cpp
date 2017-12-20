@@ -18,6 +18,7 @@ Chunk::Chunk(std::string message)
     if (l > 64) l  = 64;
     for (size_t i = 0; i < l; ++i) {
         data[indexToBigEndianIndex(i)] = message[i];
+        //data[i] = message[i];
     }
 }
 

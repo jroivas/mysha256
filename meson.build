@@ -11,7 +11,8 @@ src_inc = include_directories('src')
 
 sha_lib = static_library('myshalib', [
     'src/boxes.cpp',
-    'src/message.cpp'
+    'src/message.cpp',
+    'src/hash.cpp'
     ]
 )
 

@@ -1,6 +1,7 @@
 #include "test.hh"
 #include "boxes.hh"
 #include "message.hh"
+#include "hash.hh"
 
 TEST_MAIN(
 
@@ -193,6 +194,56 @@ TEST_MAIN(
       res[0] = 0x761d5d5c;
       res[1] = 0x166a6a69;
       TEST_ASSERT_EQUALS_ARRAY_INDEX(schedule.wordPtr(), res, 16, 2);
+    )
+  )
+
+  TEST_SUITE(Hash,
+    TEST_CASE(Empty hash,
+      sha::Hash hash;
+      uint32_t res[8] = {0};
+      res[0] = 0x6a09e667;
+      res[1] = 0xbb67ae85;
+      res[2] = 0x3c6ef372;
+      res[3] = 0xa54ff53a;
+      res[4] = 0x510e527f;
+      res[5] = 0x9b05688c;
+      res[6] = 0x1f83d9ab;
+      res[7] = 0x5be0cd19;
+      TEST_ASSERT_EQUALS_ARRAY(hash.get(), res, 8);
+    )
+
+    TEST_CASE(Empty rounds hash,
+      sha::Message::Chunk chunk;
+      sha::Hash hash;
+      hash.round(chunk);
+      uint32_t res[8] = {0};
+      res[0] = 0x6a09e667;
+      res[1] = 0xbb67ae85;
+      res[2] = 0x3c6ef372;
+      res[3] = 0xa54ff53a;
+      res[4] = 0x510e527f;
+      res[5] = 0x9b05688c;
+      res[6] = 0x1f83d9ab;
+      res[7] = 0x5be0cd19;
+      TEST_ASSERT_EQUALS_ARRAY(hash.get(), res, 8);
+    )
+
+    TEST_CASE(Hash round with one chunk,
+      sha::Message::Chunk chunk("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnoooopppp");
+      sha::Hash hash;
+      hash.round(chunk);
+
+      uint32_t res[8] = {0};
+      res[0] = 0x6a09e667;
+      res[1] = 0xbb67ae85;
+      res[2] = 0x3c6ef372;
+      res[3] = 0xa54ff53a;
+      res[4] = 0x510e527f;
+      res[5] = 0x9b05688c;
+      res[6] = 0x1f83d9ab;
+      res[7] = 0x5be0cd19;
+      //37e4e3c02a59b5f82b095a3c75acf04a0bad972ef5488999a71e99df56c28772
+      TEST_ASSERT_EQUALS_ARRAY(hash.get(), res, 8);
     )
   )
 )

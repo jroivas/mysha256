@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <string>
 
 static long __success = 0;
 static long __suite_success = 0;
@@ -34,3 +35,11 @@ int main(int argc, char**argv) {\
 #define TEST_ASSERT_TRUE(X) TEST_ONE_ASSERT do { if ((X)) { __success++; } else { std::stringstream s; s << #X; throw s.str(); } } while (0);
 #define TEST_ASSERT_FALSE(X) TEST_ASSERT_TRUE(!X)
 #define TEST_ASSERT_EQUALS(X, Y) TEST_ONE_ASSERT do { if ((X == Y)) { __success++; } else { std::stringstream s; s << #X << " != " << #Y << ", got " << std::hex << X << std::dec; throw s.str(); } } while (0);
+#define TEST_ASSERT_EQUALS_ARRAY(X, Y, SIZE) TEST_ONE_ASSERT do { \
+    for (size_t i = 0; i < SIZE; ++i) {\
+        if (X[i] != Y[i]) {\
+            std::stringstream s; s << "Array does not match at index " << i << " " << X[i] << " != " << Y[i];\
+            throw s.str();\
+        }\
+    }\
+     __success++;} while (0);

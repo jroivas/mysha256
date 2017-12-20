@@ -1,5 +1,6 @@
 #include "test.hh"
 #include "boxes.hh"
+#include "message.hh"
 
 TEST_MAIN(
 
@@ -102,6 +103,20 @@ TEST_MAIN(
     )
     TEST_CASE(S1 box random input,
       TEST_ASSERT_EQUALS(sha::Box::S1(0xABE1337F), 0x61c3473e)
+    )
+  )
+
+  TEST_SUITE(message import,
+    TEST_CASE(import from empty string,
+      uint32_t res[16] = {0};
+      TEST_ASSERT_EQUALS_ARRAY(sha::Message::import(""), res, 16)
+    )
+    TEST_CASE(import from string,
+      uint32_t res[16] = {0};
+      res[0] = 0x48656c6c;
+      res[1] = 0x6f20776f;
+      res[2] = 0x726c6400;
+      TEST_ASSERT_EQUALS_ARRAY(sha::Message::import("Hello world"), res, 16)
     )
   )
 )

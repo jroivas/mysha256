@@ -63,4 +63,24 @@ TEST_MAIN(
     )
   )
 
+  TEST_SUITE(S0 box,
+    TEST_CASE(S0 box zero input,
+      TEST_ASSERT_EQUALS(sha::Box::S0(0), 0)
+    )
+    TEST_CASE(S0 box one input,
+      TEST_ASSERT_EQUALS(sha::Box::S0(1), 0x40080400)
+    )
+    TEST_CASE(S0 box full input,
+      TEST_ASSERT_EQUALS(sha::Box::S0(0xFFFFFFFF), 0xFFFFFFFF)
+    )
+    TEST_CASE(S0 box one zero at end,
+      TEST_ASSERT_EQUALS(sha::Box::S0(0xFFFFFFFE), 0xbff7fbff)
+    )
+    TEST_CASE(S0 box one zero at begin,
+      TEST_ASSERT_EQUALS(sha::Box::S0(0x7FFFFFFF), 0xDFFBFDFF)
+    )
+    TEST_CASE(S0 box random input,
+      TEST_ASSERT_EQUALS(sha::Box::S0(0xABE1337F), 0xF5C8ED79)
+    )
+  )
 )

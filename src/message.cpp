@@ -72,14 +72,12 @@ std::vector<Chunk> sha::Message::Chunk::create(const std::string message)
 
 Schedule::Schedule(const Chunk &chunk)
 {
-    data = new uint32_t[64];
     copyChunk(chunk);
     extendRest();
 }
 
 Schedule::Schedule(const Schedule &other)
 {
-    data = new uint32_t[64];
     for (size_t i = 0; i < 64; ++i) data[i] = other.data[i];
 }
 

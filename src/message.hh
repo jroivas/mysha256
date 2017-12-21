@@ -26,15 +26,13 @@ class Schedule {
 public:
     Schedule(const Chunk &);
     Schedule(const Schedule &);
-    ~Schedule() {
-        delete[] data;
-    }
+    ~Schedule() {}
     const uint32_t *wordPtr() const;
 
 private:
     void copyChunk(const Chunk &);
     void extendRest();
-    uint32_t *data;
+    uint32_t data[64];
 };
 
 }

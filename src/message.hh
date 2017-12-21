@@ -14,17 +14,17 @@ public:
     const uint32_t *wordPtr() const;
     void insertLength(size_t length);
 
-private:
-    Chunk();
-    Chunk(std::string message);
-    void init();
-    size_t indexToBigEndianIndex(size_t);
-    uint8_t data[64];
-
     static size_t numChunks(size_t messageLength);
     static bool isLastChunk(size_t index, size_t numChunks);
     static Chunk createChunkFromMessage(size_t index, size_t numChunks, const std::string &message);
     static std::vector<Chunk> createChunks(std::string &);
+    size_t indexToBigEndianIndex(size_t);
+
+private:
+    Chunk();
+    Chunk(std::string message);
+    void init();
+    uint8_t data[64];
 };
 
 class Schedule {

@@ -60,7 +60,7 @@ size_t sha::Message::Chunk::numChunks(size_t messageLength)
 
 bool sha::Message::Chunk::isLastChunk(size_t index, size_t numChunks)
 {
-    return (index == numChunks - 1);
+    return (index >= numChunks - 1);
 }
 
 Chunk sha::Message::Chunk::createChunkFromMessage(size_t index, size_t numChunks, const std::string &message)

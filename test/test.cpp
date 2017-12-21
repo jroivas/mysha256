@@ -186,6 +186,23 @@ TEST_MAIN(
       res[3] = 0x80000000;
       TEST_ASSERT_EQUALS_ARRAY(chunks[1].wordPtr(), res, 8)
     )
+    TEST_CASE(Number of chunks from message length,
+      TEST_ASSERT_EQUALS(sha::Message::Chunk::numChunks(1), 1)
+      TEST_ASSERT_EQUALS(sha::Message::Chunk::numChunks(100), 2)
+      TEST_ASSERT_EQUALS(sha::Message::Chunk::numChunks(128), 3)
+      TEST_ASSERT_EQUALS(sha::Message::Chunk::numChunks(1024), 17)
+      TEST_ASSERT_EQUALS(sha::Message::Chunk::numChunks(1000), 16)
+      TEST_ASSERT_EQUALS(sha::Message::Chunk::numChunks(8000), 126)
+    )
+    TEST_CASE(Last chunk by index,
+      TEST_ASSERT_FALSE(sha::Message::Chunk::isLastChunk(1, 0))
+      TEST_ASSERT_TRUE(sha::Message::Chunk::isLastChunk(1, 1))
+      TEST_ASSERT_TRUE(sha::Message::Chunk::isLastChunk(1, 2))
+      TEST_ASSERT_FALSE(sha::Message::Chunk::isLastChunk(1, 3))
+      TEST_ASSERT_TRUE(sha::Message::Chunk::isLastChunk(2, 3))
+      TEST_ASSERT_TRUE(sha::Message::Chunk::isLastChunk(99, 100))
+      TEST_ASSERT_FALSE(sha::Message::Chunk::isLastChunk(98, 100))
+    )
   )
 
   TEST_SUITE(Message schedule from chunk,

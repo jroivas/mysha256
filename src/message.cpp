@@ -52,22 +52,40 @@ void Chunk::insertLength(size_t length)
     tmp[15] = lenvar & 0xFFFFFFFF;
 }
 
+size_t sha::Message::Chunk::numChunks(size_t messageLength)
+{
+    size_t len = messageLength / 4 + 2;
+    return ceil(len / 16.0);
+}
+
+bool sha::Message::Chunk::isLastChunk(size_t index, size_t numChunks)
+{
+    return (index == numChunks - 1);
+}
+
+Chunk sha::Message::Chunk::createChunkFromMessage(size_t index, size_t numChunks, const std::string &message)
+{
+    std::string data = "";
+    if (index * 64 < message.length()) data = message.substr(index * 64);
+    Chunk chunk(data);
+    if (isLastChunk(index, numChunks)) chunk.insertLength(message.length());
+    return chunk;
+}
+
+std::vector<Chunk> sha::Message::Chunk::createChunks(std::string &data)
+{
+    size_t chunks = numChunks(data.length());
+    std::vector<Chunk> res;
+    for (size_t i = 0; i < chunks; ++i)
+        res.push_back(createChunkFromMessage(i, chunks, data));
+    return res;
+}
+
 std::vector<Chunk> sha::Message::Chunk::create(const std::string message)
 {
     std::string data = message;
     data += uint8_t(0x80);
-    std::vector<Chunk> res;
-    size_t len = data.length();
-    size_t len1 = len / 4 + 2;
-    size_t chunks = ceil(len1 / 16.0);
-    for (size_t i = 0; i < chunks; ++i) {
-        std::string d = "";
-        if (i * 64 < len) d = data.substr(i * 64);
-        Chunk a(d);
-        if (i == chunks - 1) a.insertLength(len);
-        res.push_back(a);
-    }
-    return res;
+    return createChunks(data);
 }
 
 Schedule::Schedule(const Chunk &chunk)

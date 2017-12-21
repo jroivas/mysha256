@@ -24,8 +24,7 @@ Chunk::Chunk(std::string message)
 
 Chunk::Chunk(const Chunk &other)
 {
-    init();
-    memcpy(data, other.data, 65);
+    memcpy(data, other.data, 64);
 }
 
 size_t Chunk::indexToBigEndianIndex(size_t i)
@@ -37,12 +36,12 @@ size_t Chunk::indexToBigEndianIndex(size_t i)
 
 void Chunk::init()
 {
-    data = new uint8_t[64]();
+    memset(data, 0, 64);
 }
 
 const uint32_t *Chunk::wordPtr() const
 {
-    return reinterpret_cast<uint32_t*>(data);
+    return reinterpret_cast<const uint32_t*>(data);
 }
 
 void Chunk::insertLength(size_t length)
@@ -51,6 +50,24 @@ void Chunk::insertLength(size_t length)
     uint32_t *tmp = reinterpret_cast<uint32_t*>(data);
     tmp[14] = (lenvar >> 32) & 0xFFFFFFFF;
     tmp[15] = lenvar & 0xFFFFFFFF;
+}
+
+std::vector<Chunk> sha::Message::Chunk::create(const std::string message)
+{
+    std::string data = message;
+    data += uint8_t(0x80);
+    std::vector<Chunk> res;
+    size_t len = data.length();
+    size_t len1 = len / 4 + 2;
+    size_t chunks = ceil(len1 / 16.0);
+    for (size_t i = 0; i < chunks; ++i) {
+        std::string d = "";
+        if (i * 64 < len) d = data.substr(i * 64);
+        Chunk a(d);
+        if (i == chunks - 1) a.insertLength(len);
+        res.push_back(a);
+    }
+    return res;
 }
 
 Schedule::Schedule(const Chunk &chunk)
@@ -85,22 +102,3 @@ const uint32_t *Schedule::wordPtr() const
 {
     return data;
 }
-
-std::vector<Chunk> sha::Message::Chunk::create(const std::string message)
-{
-    std::string data = message;
-    data += 0x80;
-    std::vector<Chunk> res;
-    size_t len = data.length();
-    size_t len1 = len / 4 + 2;
-    size_t chunks = ceil(len1 / 16.0);
-    for (size_t i = 0; i < chunks; ++i) {
-        std::string d = "";
-        if (i * 64 < len) d = data.substr(i * 64);
-        Chunk a(d);
-        if (i == chunks - 1) a.insertLength(len);
-        res.push_back(a);
-    }
-    return res;
-}
-

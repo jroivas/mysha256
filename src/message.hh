@@ -10,9 +10,7 @@ class Chunk {
 public:
     static std::vector<Chunk> create(const std::string);
     Chunk(const Chunk&);
-    ~Chunk() {
-        delete[] data;
-    }
+    ~Chunk() {}
     const uint32_t *wordPtr() const;
     void insertLength(size_t length);
 
@@ -21,7 +19,7 @@ private:
     Chunk(std::string message);
     void init();
     size_t indexToBigEndianIndex(size_t);
-    uint8_t *data;
+    uint8_t data[64];
 };
 
 class Schedule {

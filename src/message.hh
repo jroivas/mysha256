@@ -18,7 +18,7 @@ public:
     static bool isLastChunk(size_t index, size_t numChunks);
     static Chunk createChunkFromMessage(size_t index, size_t numChunks, const std::string &message);
     static std::vector<Chunk> createChunks(std::string &);
-    size_t indexToBigEndianIndex(size_t);
+    static size_t indexToBigEndianIndex(size_t);
 
 private:
     Chunk();

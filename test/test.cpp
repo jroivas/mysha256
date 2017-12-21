@@ -203,6 +203,26 @@ TEST_MAIN(
       TEST_ASSERT_TRUE(sha::Message::Chunk::isLastChunk(99, 100))
       TEST_ASSERT_FALSE(sha::Message::Chunk::isLastChunk(98, 100))
     )
+    TEST_CASE(Index to big endian index,
+      TEST_ASSERT_EQUALS(sha::Message::Chunk::indexToBigEndianIndex(0), 3)
+      TEST_ASSERT_EQUALS(sha::Message::Chunk::indexToBigEndianIndex(1), 2)
+      TEST_ASSERT_EQUALS(sha::Message::Chunk::indexToBigEndianIndex(2), 1)
+      TEST_ASSERT_EQUALS(sha::Message::Chunk::indexToBigEndianIndex(3), 0)
+    )
+    TEST_CASE(Create chunk from message,
+      TEST_ASSERT_EQUALS(sha::Message::Chunk::createChunkFromMessage(0, 1, "abcde").wordPtr()[0], 0x61626364)
+
+      TEST_ASSERT_EQUALS(sha::Message::Chunk::createChunkFromMessage(0, 1, "aaabbb").wordPtr()[0], 0x61616162)
+      TEST_ASSERT_EQUALS(sha::Message::Chunk::createChunkFromMessage(0, 1, "aaabbb").wordPtr()[1], 0x62620000)
+      TEST_ASSERT_EQUALS(sha::Message::Chunk::createChunkFromMessage(0, 1, "aaabbb").wordPtr()[2], 0x0)
+    )
+    TEST_CASE(Create chunks from message,
+      std::string msg = "aaabbb";
+      std::vector<sha::Message::Chunk> chunks = sha::Message::Chunk::createChunks(msg);
+      TEST_ASSERT_EQUALS(chunks.size(), 1)
+      TEST_ASSERT_EQUALS(chunks[0].wordPtr()[0], 0x61616162)
+      TEST_ASSERT_EQUALS(chunks[0].wordPtr()[1], 0x62620000)
+    )
   )
 
   TEST_SUITE(Message schedule from chunk,

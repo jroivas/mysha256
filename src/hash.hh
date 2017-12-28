@@ -1,6 +1,7 @@
 #pragma once
 
 #include "message.hh"
+#include <array>
 #include <vector>
 
 namespace sha {
@@ -15,6 +16,7 @@ public:
     void calculate(const std::string);
     const uint32_t *get() const;
     std::string digest();
+    std::array<uint32_t, 8> rawDigest() const;
     void reset();
 
 private:

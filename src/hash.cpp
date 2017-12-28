@@ -90,6 +90,13 @@ std::string Hash::digest()
     return storedDigest;
 }
 
+std::array<uint32_t, 8> Hash::rawDigest() const
+{
+    std::array<uint32_t, 8> res;
+    std::copy(std::begin(hash), std::end(hash), std::begin(res));
+    return res;
+}
+
 void Hash::calculate(const std::string str)
 {
     reset();

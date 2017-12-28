@@ -2,6 +2,7 @@
 #include "boxes.hh"
 #include "message.hh"
 #include "hash.hh"
+#include <array>
 
 TEST_MAIN(
 
@@ -358,6 +359,20 @@ TEST_MAIN(
       sha::Hash hash;
       hash.calculate("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
       TEST_ASSERT_EQUALS(hash.digest(), "2d8c2f6d978ca21712b5f6de36c9d31fa8e96a4fa5d8ff8b0188dfb9e7c171bb");
+    )
+    TEST_CASE(Raw digest from hash,
+      sha::Hash hash;
+      hash.calculate("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnoooopppp");
+      uint32_t res[8] = {0};
+      res[0] = 0x37e4e3c0;
+      res[1] = 0x2a59b5f8;
+      res[2] = 0x2b095a3c;
+      res[3] = 0x75acf04a;
+      res[4] = 0x0bad972e;
+      res[5] = 0xf5488999;
+      res[6] = 0xa71e99df;
+      res[7] = 0x56c28772;
+      TEST_ASSERT_EQUALS_ARRAY(hash.rawDigest(), res, 8);
     )
   )
 )

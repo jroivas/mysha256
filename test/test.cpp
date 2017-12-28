@@ -350,6 +350,10 @@ TEST_MAIN(
       hash.calculate("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnoooopppp");
       TEST_ASSERT_EQUALS(hash.digest(), "37e4e3c02a59b5f82b095a3c75acf04a0bad972ef5488999a71e99df56c28772");
     )
+    TEST_CASE(Simple hash message constructor,
+      sha::Hash hash("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnoooopppp");
+      TEST_ASSERT_EQUALS(hash.digest(), "37e4e3c02a59b5f82b095a3c75acf04a0bad972ef5488999a71e99df56c28772");
+    )
     TEST_CASE(Simple hashing for multiple chunks,
       sha::Hash hash;
       hash.calculate("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");

@@ -11,6 +11,11 @@ Hash::Hash() {
     reset();
 }
 
+Hash::Hash(const std::string h)
+{
+    calculate(h);
+}
+
 void Hash::reset()
 {
     memcpy(hash, sha::H, 4 * 8);

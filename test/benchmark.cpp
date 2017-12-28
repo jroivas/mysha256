@@ -76,9 +76,10 @@ void test4() {
 int main(int argc, char **argv)
 {
     Benchmark bm;
-    std::cout << bm.run(test1, 10000) << "\n";
-    std::cout << bm.run(test2, 100000) << "\n";
-    std::cout << bm.run(test3, 1000, 100) << "\n";
-    std::cout << bm.run(test4, 10000) << "\n";
+    uint32_t base = 100;
+    std::cout << bm.run(test1, 100 * base) << "\n";
+    std::cout << bm.run(test2, 1000 * base) << "\n";
+    std::cout << bm.run(test3, 10 * base, 100) << "\n";
+    std::cout << bm.run(test4, 100 * base) << "\n";
     return 0;
 }

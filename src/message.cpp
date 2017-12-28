@@ -20,11 +20,13 @@ Chunk::Chunk(std::string message)
     for (size_t i = 0; i < l; ++i) {
         data[indexToBigEndianIndex(i)] = message[i];
     }
+    extendRest();
 }
 
 Chunk::Chunk(const Chunk &other)
 {
-    memcpy(data, other.data, 64);
+    memcpy(data, other.data, 64 * 4);
+    extendRest();
 }
 
 size_t Chunk::indexToBigEndianIndex(size_t i)
@@ -36,7 +38,7 @@ size_t Chunk::indexToBigEndianIndex(size_t i)
 
 void Chunk::init()
 {
-    memset(data, 0, 64);
+    memset(data, 0, 64 * 4);
 }
 
 const uint32_t *Chunk::wordPtr() const
@@ -88,33 +90,12 @@ std::vector<Chunk> sha::Message::Chunk::create(const std::string message)
     return createChunks(data);
 }
 
-Schedule::Schedule(const Chunk &chunk)
+void sha::Message::Chunk::extendRest()
 {
-    copyChunk(chunk);
-    extendRest();
-}
-
-Schedule::Schedule(const Schedule &other)
-{
-    for (size_t i = 0; i < 64; ++i) data[i] = other.data[i];
-}
-
-void Schedule::copyChunk(const Chunk &chunk)
-{
-    const uint32_t *src = chunk.wordPtr();
-    for (size_t i = 0; i < 16; ++i) data[i] = src[i];
-}
-
-void Schedule::extendRest()
-{
+    uint32_t *dataWord = reinterpret_cast<uint32_t*>(data);
     for (size_t i = 16; i < 64; ++i) {
-        uint32_t s0 = sha::Box::I0(data[i - 15]);
-        uint32_t s1 = sha::Box::I1(data[i - 2]);
-        data[i] = data[i - 16] + s0 + data[i - 7] + s1;
+        uint32_t s0 = sha::Box::I0(dataWord[i - 15]);
+        uint32_t s1 = sha::Box::I1(dataWord[i - 2]);
+        dataWord[i] = dataWord[i - 16] + s0 + dataWord[i - 7] + s1;
     }
-}
-
-const uint32_t *Schedule::wordPtr() const
-{
-    return data;
 }

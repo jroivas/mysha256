@@ -24,21 +24,11 @@ private:
     Chunk();
     Chunk(std::string message);
     void init();
-    uint8_t data[64];
-};
-
-class Schedule {
-public:
-    Schedule(const Chunk &);
-    Schedule(const Schedule &);
-    ~Schedule() {}
-    const uint32_t *wordPtr() const;
-
-private:
-    void copyChunk(const Chunk &);
     void extendRest();
-    uint32_t data[64];
+    uint8_t data[64 * 4];
 };
+
+typedef Chunk Schedule;
 
 }
 }

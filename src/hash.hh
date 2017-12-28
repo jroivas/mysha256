@@ -14,6 +14,7 @@ public:
     void calculate(const std::string);
     const uint32_t *get() const;
     std::string digest();
+    void reset();
 
 private:
     uint32_t calculateT1(size_t, const uint32_t *, const uint32_t *) const;

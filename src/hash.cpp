@@ -8,6 +8,11 @@
 using sha::Hash;
 
 Hash::Hash() {
+    reset();
+}
+
+void Hash::reset()
+{
     memcpy(hash, sha::H, 4 * 8);
 }
 
@@ -82,5 +87,6 @@ std::string Hash::digest()
 
 void Hash::calculate(const std::string str)
 {
+    reset();
     round(sha::Message::Chunk::create(str));
 }

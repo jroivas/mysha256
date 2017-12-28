@@ -72,9 +72,15 @@ std::string Hash::digest()
     if (storedDigest.empty()) {
         std::stringstream s;
         s << std::hex;
-        for (size_t i = 0; i < 8; ++i) s << std::setfill('0') << std::setw(8) << hash[i];
+        for (size_t i = 0; i < 8; ++i)
+             s << std::setfill('0') << std::setw(8) << hash[i] ;
         s << std::dec;
         storedDigest = s.str();
     }
     return storedDigest;
+}
+
+void Hash::calculate(const std::string str)
+{
+    round(sha::Message::Chunk::create(str));
 }

@@ -11,6 +11,7 @@ public:
     Hash();
     void round(const sha::Message::Schedule &);
     void round(const std::vector<sha::Message::Chunk> &);
+    void calculate(const std::string);
     const uint32_t *get() const;
     std::string digest();
 

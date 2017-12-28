@@ -69,7 +69,7 @@ void Hash::appendRound(const uint32_t *r)
     for (size_t i = 0; i < 8; ++i) hash[i] += r[i];
 }
 
-void Hash::round(const sha::Message::Schedule &schedule)
+void Hash::round(const sha::Message::Chunk &schedule)
 {
     storedDigest = "";
     uint32_t r[8];

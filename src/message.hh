@@ -28,7 +28,5 @@ private:
     uint8_t data[64 * 4];
 };
 
-typedef Chunk Schedule;
-
 }
 }

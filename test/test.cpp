@@ -228,15 +228,14 @@ TEST_MAIN(
 
   TEST_SUITE(Message schedule from chunk,
     std::vector<sha::Message::Chunk> chunks = sha::Message::Chunk::create("aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnoooopppp");
-    sha::Message::Schedule schedule(chunks[0]);
     TEST_CASE(Chunk is copied,
-      TEST_ASSERT_EQUALS_ARRAY(schedule.wordPtr(), alphabet, 16);
+      TEST_ASSERT_EQUALS_ARRAY(chunks[0].wordPtr(), alphabet, 16);
     )
     TEST_CASE(Rest of schedule is generated,
       uint32_t res[16] = {0};
       res[0] = 0x761d5d5c;
       res[1] = 0x166a6a69;
-      TEST_ASSERT_EQUALS_ARRAY_INDEX(schedule.wordPtr(), res, 16, 2);
+      TEST_ASSERT_EQUALS_ARRAY_INDEX(chunks[0].wordPtr(), res, 16, 2);
     )
   )
 

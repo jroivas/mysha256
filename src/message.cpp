@@ -5,7 +5,6 @@
 #include "boxes.hh"
 
 using sha::Message::Chunk;
-using sha::Message::Schedule;
 
 Chunk::Chunk()
 {

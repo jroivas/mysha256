@@ -40,4 +40,16 @@ test_exe = executable('test-mysha256', [
     ]
 )
 
+benchmark_exe = executable('benchmark-mysha256', [
+    'test/benchmark.cpp',
+    ],
+    include_directories: [
+        top_inc,
+        src_inc,
+    ],
+    link_with: [
+         sha_lib
+    ]
+)
+
 test('test-mysha256', test_exe)

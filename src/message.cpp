@@ -16,7 +16,7 @@ Chunk::Chunk(std::string message)
 {
     init();
     size_t l = message.length();
-    if (l > 64) l  = 64;
+    if (l > 64) l = 64;
     for (size_t i = 0; i < l; ++i) {
         data[indexToBigEndianIndex(i)] = message[i];
     }
@@ -72,7 +72,7 @@ Chunk sha::Message::Chunk::createChunkFromMessage(size_t index, size_t numChunks
     return chunk;
 }
 
-std::vector<Chunk> sha::Message::Chunk::createChunks(std::string &data)
+std::vector<Chunk> sha::Message::Chunk::createChunks(const std::string &data)
 {
     size_t chunks = numChunks(data.length());
     std::vector<Chunk> res;

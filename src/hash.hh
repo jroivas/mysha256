@@ -20,8 +20,8 @@ public:
     void reset();
 
 private:
-    uint32_t calculateT1(size_t, const uint32_t *, const uint32_t *) const;
-    uint32_t calculateT2(const uint32_t *) const;
+    inline uint32_t calculateT1(size_t i, const uint32_t *r, const uint32_t *data) const;
+    inline uint32_t calculateT2(const uint32_t *r) const;
     void loopRounds(uint32_t *, const uint32_t *);
     void rotateOld(uint32_t *r);
     void applyTemp(uint32_t *r, uint32_t, uint32_t);

@@ -38,7 +38,13 @@ uint32_t Hash::calculateT2(const uint32_t *r) const
 
 void Hash::rotateOld(uint32_t *r)
 {
-    for (size_t i = 7; i>0; --i) r[i] = r[i - 1];
+    r[7] = r[6];
+    r[6] = r[5];
+    r[5] = r[4];
+    r[4] = r[3];
+    r[3] = r[2];
+    r[2] = r[1];
+    r[1] = r[0];
 }
 
 void Hash::applyTemp(uint32_t *r, uint32_t a, uint32_t b)

@@ -68,7 +68,7 @@ bool sha::Message::Chunk::isLastChunk(size_t index, size_t numChunks)
     return (index >= numChunks - 1);
 }
 
-Chunk* sha::Message::Chunk::createChunkFromMessage(size_t index, size_t numChunks, const std::string &message)
+std::unique_ptr<Chunk> sha::Message::Chunk::createChunkFromMessage(size_t index, size_t numChunks, const std::string &message)
 {
     size_t pos = index * 64;
     size_t l = message.length();
@@ -79,21 +79,23 @@ Chunk* sha::Message::Chunk::createChunkFromMessage(size_t index, size_t numChunk
     }
 
     if (isLastChunk(index, numChunks)) {
-        return new Chunk(message.c_str() + pos, l, message.length());
+        std::unique_ptr<Chunk> res(new Chunk(message.c_str() + pos, l, message.length()));
+        return res;
     }
-    return new Chunk(message.c_str() + pos, l);
-}
-
-std::vector<Chunk*> sha::Message::Chunk::createChunks(const std::string &data)
-{
-    size_t chunks = numChunks(data.length());
-    std::vector<Chunk*> res;
-    for (size_t i = 0; i < chunks; ++i)
-        res.push_back(createChunkFromMessage(i, chunks, data));
+    std::unique_ptr<Chunk> res(new Chunk(message.c_str() + pos, l));
     return res;
 }
 
-std::vector<Chunk*> sha::Message::Chunk::create(const std::string message)
+std::vector<std::unique_ptr<Chunk>> sha::Message::Chunk::createChunks(const std::string &data)
+{
+    size_t chunks = numChunks(data.length());
+    std::vector<std::unique_ptr<Chunk>> res;
+    for (size_t i = 0; i < chunks; ++i)
+        res.push_back(std::move(createChunkFromMessage(i, chunks, data)));
+    return res;
+}
+
+std::vector<std::unique_ptr<Chunk>> sha::Message::Chunk::create(const std::string message)
 {
     std::string data = message;
     data += uint8_t(0x80);

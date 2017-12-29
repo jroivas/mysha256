@@ -12,8 +12,8 @@ class Hash
 public:
     Hash();
     Hash(const std::string);
-    void round(const sha::Message::Chunk*);
-    void round(const std::vector<sha::Message::Chunk*> &);
+    void round(std::unique_ptr<sha::Message::Chunk>&);
+    void round(std::vector<std::unique_ptr<sha::Message::Chunk>> &);
     void calculate(const std::string);
     const uint32_t *get() const;
     std::string digest();

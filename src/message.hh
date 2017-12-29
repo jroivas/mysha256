@@ -12,9 +12,7 @@ namespace Message {
 class Chunk {
 public:
     static std::vector<Chunk*> create(const std::string);
-    ~Chunk() {
-        std::cout << "DEST\n";
-    }
+    ~Chunk() {}
     const uint32_t *wordPtr() const;
     void insertLength(size_t length);
 

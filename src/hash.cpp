@@ -42,7 +42,6 @@ void Hash::rotateOld(uint32_t *r)
     r[7] = r[6];
     r[6] = r[5];
     r[5] = r[4];
-    r[4] = r[3];
     r[3] = r[2];
     r[2] = r[1];
     r[1] = r[0];

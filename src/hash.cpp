@@ -7,7 +7,8 @@
 
 using sha::Hash;
 
-Hash::Hash() {
+Hash::Hash()
+{
     reset();
 }
 
@@ -106,6 +107,5 @@ std::array<uint32_t, 8> Hash::rawDigest() const
 void Hash::calculate(const std::string str)
 {
     reset();
-    //std::vector<sha::Message::Chunk*> chunks = sha::Message::Chunk::create(str);
     round(sha::Message::Chunk::create(str));
 }

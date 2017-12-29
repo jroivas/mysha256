@@ -11,10 +11,9 @@ Chunk::Chunk()
     init();
 }
 
-Chunk::Chunk(std::string message)
+Chunk::Chunk(const char *message, size_t l)
 {
     init();
-    size_t l = message.length();
     if (l > 64) l = 64;
     for (size_t i = 0; i < l; ++i) {
         data[indexToBigEndianIndex(i)] = message[i];
@@ -22,17 +21,14 @@ Chunk::Chunk(std::string message)
     extendRest();
 }
 
-Chunk::Chunk(const Chunk &other)
+Chunk::Chunk(const char *message, size_t l, size_t length)
 {
-    std::cout << "COPYY\n";
-    memcpy(data, other.data, 64 * 4);
-    extendRest();
-}
-
-Chunk::Chunk(const Chunk *other)
-{
-    std::cout << "COPY2\n";
-    memcpy(data, other->data, 64 * 4);
+    init();
+    if (l > 64) l = 64;
+    for (size_t i = 0; i < l; ++i) {
+        data[indexToBigEndianIndex(i)] = message[i];
+    }
+    insertLength(length);
     extendRest();
 }
 
@@ -74,11 +70,18 @@ bool sha::Message::Chunk::isLastChunk(size_t index, size_t numChunks)
 
 Chunk* sha::Message::Chunk::createChunkFromMessage(size_t index, size_t numChunks, const std::string &message)
 {
-    std::string data = "";
-    if (index * 64 < message.length()) data = message.substr(index * 64);
-    Chunk *chunk = new Chunk(data);
-    if (isLastChunk(index, numChunks)) chunk->insertLength(message.length());
-    return chunk;
+    size_t pos = index * 64;
+    size_t l = message.length();
+    if (index * 64 < l) {
+        l -= index * 64;
+    } else {
+        l = 0;
+    }
+
+    if (isLastChunk(index, numChunks)) {
+        return new Chunk(message.c_str() + pos, l, message.length());
+    }
+    return new Chunk(message.c_str() + pos, l);
 }
 
 std::vector<Chunk*> sha::Message::Chunk::createChunks(const std::string &data)

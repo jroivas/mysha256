@@ -12,8 +12,6 @@ namespace Message {
 class Chunk {
 public:
     static std::vector<Chunk*> create(const std::string);
-    Chunk(const Chunk&);
-    Chunk(const Chunk*);
     ~Chunk() {
         std::cout << "DEST\n";
     }
@@ -28,7 +26,8 @@ public:
 
 private:
     Chunk();
-    Chunk(std::string message);
+    Chunk(const char *, size_t);
+    Chunk(const char *, size_t, size_t);
     void init();
     void extendRest();
     uint8_t data[64 * 4];

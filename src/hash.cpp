@@ -69,16 +69,16 @@ void Hash::appendRound(const uint32_t *r)
     for (size_t i = 0; i < 8; ++i) hash[i] += r[i];
 }
 
-void Hash::round(const sha::Message::Chunk &schedule)
+void Hash::round(const sha::Message::Chunk *chunk)
 {
     storedDigest = "";
     uint32_t r[8];
     memcpy(r, hash, 8 * 4);
-    loopRounds(r, schedule.wordPtr());
+    loopRounds(r, chunk->wordPtr());
     appendRound(r);
 }
 
-void Hash::round(const std::vector<sha::Message::Chunk> &chunks)
+void Hash::round(const std::vector<sha::Message::Chunk*> &chunks)
 {
     for (auto chunk : chunks) round(chunk);
 }
@@ -106,5 +106,6 @@ std::array<uint32_t, 8> Hash::rawDigest() const
 void Hash::calculate(const std::string str)
 {
     reset();
+    //std::vector<sha::Message::Chunk*> chunks = sha::Message::Chunk::create(str);
     round(sha::Message::Chunk::create(str));
 }

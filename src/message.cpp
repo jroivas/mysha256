@@ -24,7 +24,15 @@ Chunk::Chunk(std::string message)
 
 Chunk::Chunk(const Chunk &other)
 {
+    std::cout << "COPYY\n";
     memcpy(data, other.data, 64 * 4);
+    extendRest();
+}
+
+Chunk::Chunk(const Chunk *other)
+{
+    std::cout << "COPY2\n";
+    memcpy(data, other->data, 64 * 4);
     extendRest();
 }
 
@@ -64,25 +72,25 @@ bool sha::Message::Chunk::isLastChunk(size_t index, size_t numChunks)
     return (index >= numChunks - 1);
 }
 
-Chunk sha::Message::Chunk::createChunkFromMessage(size_t index, size_t numChunks, const std::string &message)
+Chunk* sha::Message::Chunk::createChunkFromMessage(size_t index, size_t numChunks, const std::string &message)
 {
     std::string data = "";
     if (index * 64 < message.length()) data = message.substr(index * 64);
-    Chunk chunk(data);
-    if (isLastChunk(index, numChunks)) chunk.insertLength(message.length());
+    Chunk *chunk = new Chunk(data);
+    if (isLastChunk(index, numChunks)) chunk->insertLength(message.length());
     return chunk;
 }
 
-std::vector<Chunk> sha::Message::Chunk::createChunks(const std::string &data)
+std::vector<Chunk*> sha::Message::Chunk::createChunks(const std::string &data)
 {
     size_t chunks = numChunks(data.length());
-    std::vector<Chunk> res;
+    std::vector<Chunk*> res;
     for (size_t i = 0; i < chunks; ++i)
         res.push_back(createChunkFromMessage(i, chunks, data));
     return res;
 }
 
-std::vector<Chunk> sha::Message::Chunk::create(const std::string message)
+std::vector<Chunk*> sha::Message::Chunk::create(const std::string message)
 {
     std::string data = message;
     data += uint8_t(0x80);
